@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+    <title>ForumCrack : un petit dernier pour la route ?</title>
+
+    <script src="xmeffects.js"></script>
+    <script src="xm.js"></script>
+    <script src="shell.js"></script>
+
+    <link rel="stylesheet" href="98.css">
+    <style>
+      .field-row > label {
+        display: inline-block;
+        width: 50px;
+        text-align: right;
+      }
+      .field-row > input {
+        display: inline-block;
+        width: 200px;
+      }
+      button.small-button {
+        min-width: 35px;
+      }
+      section#buttons {
+        padding-top: 3px;
+      }
+      .popup {
+        z-index: 10;
+      }
+      .window-body > p {
+        text-align: center;
+        padding: 2px;
+        line-height: 1.3em;
+      }
+      .window-body > a > img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .window-body a {
+        text-decoration: none;
+      }
+      .window-body > span.label {
+        display: inline-block;
+        width: 50px;
+        text-align: right;
+      }
+      .window-body > span.content {
+        display: inline-block;
+        width: 210px;
+        padding: 2px 6px;
+      }
+      .center-screen {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="noscript-popup" class="window center-screen popup" style="width: 250px;">
+      <div class="title-bar">
+        <div class="title-bar-text">Erreur</div>
+
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <p>Cette page requiert un navigateur supportant JavaScript et WebAssembly.</p>
+      </div>
+    </div>
+
+    <div id="main-window" class="window center-screen" style="width: 250px; display: none;">
+      <div class="title-bar">
+        <div class="title-bar-text">ForumCrack KeygenMe</div>
+
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <div class="field-row" style="justify-content: flex-end">
+          <label for="text17">Nom</label>
+          <input id="text17" type="text" />
+        </div>
+        <div class="field-row" style="justify-content: flex-end">
+          <label for="text18">Serial</label>
+          <input id="text18" type="text" />
+        </div>
+        <section class="field-row" id="buttons" style="justify-content: flex-end">
+          <button id="music-button" class="small-button" onclick="toggleMusic();">&#9658;</button>
+          <button class="small-button" onclick="showAbout();">?</button>
+          <button onclick="isSerialValid();">Valider</button>
+        </section>
+      </div>
+    </div>
+
+    <div id="msgbox-popup" class="window center-screen popup" style="width: 250px; display: none;">
+      <div class="title-bar">
+        <div class="title-bar-text" id="popup-title"></div>
+
+        <div class="title-bar-controls">
+          <button aria-label="Close" onclick="closeWindow(this);"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <p id="popup-body"></p>
+      </div>
+    </div>
+
+    <div id="about-popup" class="window center-screen popup" style="width: 300px; display: none;">
+      <div class="title-bar">
+        <div class="title-bar-text">
+          &Agrave; propos
+        </div>
+
+        <div class="title-bar-controls">
+          <button aria-label="Close" onclick="closeWindow(this);"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <a href="https://web.archive.org/web/20030808155223/http://www.forumcrack.fr.st/" target="_blank">
+          <img src="logo.jpg" alt="ForumCrack old-school logo">
+        </a>
+        <p>
+          Challenge cr&eacute;&eacute; en remerciement aux administrateurs, mod&eacute;rateurs et participants de
+          <a href="https://web.archive.org/web/20210225140043/https://forumcrack.com/" target="_blank">ForumCrack</a> pour
+          tous leurs efforts et partage de connaissances durant ces 18 derni&egrave;res ann&eacute;es.
+        </p>
+        <span class="label">Auteur</span>
+        <span class="content">fargoth</span>
+        <span class="label">Musique</span>
+        <span class="content">
+          <a href="https://modarchive.org/module.php?170289" target="_blank">Aggression Keygen by LHS/DFS</a>
+        </span>
+        <span class="label">CSS</span>
+        <span class="content">
+          <a href="https://jdan.github.io/98.css/" target="_blank">https://jdan.github.io/98.css/</a>
+        </span>
+        <span class="label">XM lib</span>
+        <span class="content">
+          <a href="https://github.com/a1k0n/jsxm/" target="_blank">https://github.com/a1k0n/jsxm/</a>
+        </span>
+      </div>
+    </div>
+
+
+    <script>
+      "use strict";
+
+      if ('WebAssembly' in window) {
+        const noscriptPopup = document.getElementById("noscript-popup");
+        noscriptPopup.style.setProperty('display', 'none');
+        const mainWindow = document.getElementById("main-window");
+        mainWindow.style.removeProperty('display');
+      }
+
+      const config = {
+        env: {
+          memory: new WebAssembly.Memory({initial: 256}),
+        }
+      };
+
+      // memory manager storing name and serial in wasm shared memory buffer
+      const memoryManager = (memory) => {
+        return {
+          storeStr: (nameVal, serialVal) => {
+            // convert JS string to UTF-8
+            const nameEnc = new TextEncoder().encode(nameVal);
+            const serialEnc = new TextEncoder().encode(serialVal);
+            // store name + terminating NULL byte in wasm memory
+            const buf = new Uint8Array(memory.buffer, 0, nameEnc.length + 1);
+            buf.set(nameEnc);
+            buf[nameEnc.length] = 0;
+            // store serial + terminating NULL byte in wasm memory
+            const buf2 = new Uint8Array(memory.buffer, nameEnc.length + 1, serialEnc.length + 1);
+            buf2.set(serialEnc);
+            buf2[serialEnc.length] = 0;
+
+            return [0, nameEnc.length + 1];
+          }
+        };
+      };
+
+      const memManager = memoryManager(config.env.memory);
+
+      let checkSerial = function(flag) {
+        alert("WebAssembly code not loaded yet!");
+      };
+
+      // load webassembly checkSerial function
+      (async () => {
+        fetch('keygenme.wasm').then(response =>
+          response.arrayBuffer()
+        ).then(bytes =>
+          WebAssembly.instantiate(bytes, config)
+        ).then(result => {
+          checkSerial = result.instance.exports.checkSerial;
+        });
+      })();
+
+      function closeWindow(felem) {
+        const popup = felem.parentElement.parentElement.parentElement;
+        popup.style.setProperty('display', 'none');
+        const mainWindow = document.getElementById("main-window");
+        mainWindow.style.removeProperty('display');
+      }
+
+      function showAbout() {
+        const aboutMenu = document.getElementById("about-popup");
+        aboutMenu.style.removeProperty('display');
+        const mainWindow = document.getElementById("main-window");
+        mainWindow.style.setProperty('display', 'none');
+      }
+
+      var isMusicPlaying = false;
+
+      function toggleMusic() {
+        const musicButton = document.getElementById("music-button");
+        const player = window.XMPlayer;
+        if (isMusicPlaying) {
+          musicButton.innerHTML = "&#9658;"
+          player.pause();
+        } else {
+          musicButton.innerHTML = "&#9208;"
+          player.play();
+        }
+        isMusicPlaying = !isMusicPlaying;
+      }
+
+      function msgPopup(title, body) {
+        document.getElementById('popup-title').innerHTML = title;
+        document.getElementById('popup-body').innerHTML = body;
+        const popup = document.getElementById("msgbox-popup");
+        popup.style.removeProperty('display');
+        const mainWindow = document.getElementById("main-window");
+        mainWindow.style.setProperty('display', 'none');
+      }
+
+      function isSerialValid() {
+        const nameVal = document.getElementById("text17").value;
+        const serialVal = document.getElementById("text18").value;
+
+        if (nameVal.length < 2 || nameVal.length > 100 ||
+            serialVal.length < 2 || serialVal.length > 100) {
+          msgPopup('&Eacute;chec', 'Num&eacute;ro de s&eacute;rie invalide !');
+        } else {
+          const [namePtr, serialPtr] = memManager.storeStr(nameVal, serialVal);
+          const result = checkSerial(namePtr, serialPtr);
+          if (result == 1) {
+            msgPopup('Succ&egrave;s', 'Num&eacute;ro de s&eacute;rie valide. F&eacute;licitations !');
+          } else if (result > 1) {
+            msgPopup('Succ&egrave;s critique', 'Super num&eacute;ro de s&eacute;rie trouv&eacute;. F&eacute;licitations !');
+          } else {
+            msgPopup('&Eacute;chec', 'Num&eacute;ro de s&eacute;rie invalide !');
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
